@@ -39,11 +39,13 @@ public class Calculator {
             throw new OperatorException("Unprocessed operator.");
         }
     }
+
     private boolean hasArabic(String value) {
         Pattern pattern = Pattern.compile("\\d");
         Matcher matcher = pattern.matcher(value);
         return matcher.find();
     }
+
     private boolean hasRoman(String value) throws ExpressionException {
         try {
             RomanNumber.valueOf(value);
@@ -52,36 +54,31 @@ public class Calculator {
         }
         return true;
     }
+
     private int arabicExpression(String a, String b, Operator op) throws CalculatorException, ExpressionException {
         if (Integer.parseInt(a) > 10 | Integer.parseInt(b) > 10) {
             throw new ExpressionException("Numbers no more than 10 inclusive are allowed.");
         }
         return calculation(Integer.parseInt(a), Integer.parseInt(b), op);
     }
+
     private String romanExpression(String a, String b, Operator op) throws CalculatorException, ExpressionException {
         int valueA = RomanNumber.valueOf(a).getValue();
         int valueB = RomanNumber.valueOf(b).getValue();
         if (valueA > 10 | valueB > 10) {
             throw new ExpressionException("The calculator must accept numbers from 1 to 10 inclusive, no more.");
         }
-        int arabicResult = arabicExpression("" + valueA, "" + valueB, op);
+        int arabicResult = calculation(valueA, valueB, op);
         if (arabicResult < 1) {
             throw new CalculatorException("There are no negative numbers in the Roman numeral system.");
         }
         return convRoman(arabicResult);
     }
-    private String convRoman(int value) {
-        int dec = value / 10;
-        int unit = value % 10 - 1;
-        StringBuilder res = new StringBuilder();
-        if (dec > 0) {
-            res.append(String.valueOf(RomanNumber.X.getKey()).repeat(dec));
-        }
-        if (unit >= 0) {
-            res.append(RomanNumber.values()[unit].getKey());
-        }
-        return res.toString();
+
+    private String convRoman(int value) throws ExpressionException {
+        return RomanNumber.convertArabic(value);
     }
+
     public int calculation(int a, int b, Operator op) throws CalculatorException {
         int result = 0;
         if (op == Operator.ADDITION) {
@@ -98,6 +95,7 @@ public class Calculator {
         }
         return result;
     }
+
     public String getAnswer() throws CalculatorException, ExpressionException {
         String answer = "";
         if (hasRoman(firstValue) && hasRoman(secondValue)) {
