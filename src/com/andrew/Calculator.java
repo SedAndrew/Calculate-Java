@@ -50,7 +50,7 @@ public class Calculator {
         try {
             RomanNumber.valueOf(value);
         } catch (IllegalArgumentException e) {
-            throw new ExpressionException("The calculator must accept numbers from 1 to 10 inclusive, no more.");
+            return false;
         }
         return true;
     }
